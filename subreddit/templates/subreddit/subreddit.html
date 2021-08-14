@@ -1,0 +1,50 @@
+{%extends 'subreddit/base.html'%}
+{%load static%}
+{%block content%}
+<section class="main mt-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-8">
+				{%if posts|length > 0%}
+					{%for post in posts%}
+					<div class="card post">
+		  				<div class="card-header">
+		   				 <i class="fas fa-arrow-up"></i>
+		   				 {{post.total_vote}}
+		   				 <i class="fas fa-arrow-down"></i>
+		  				</div>
+						  <div class="card-body">
+						    <h5 class="card-title"><a href="#">{{post.title}}</a></h5>
+						    <p class="card-text">{{post.body|truncatewords:100}}</p>
+						    
+						  </div>
+					
+					</div> 
+				{%endfor%}
+				{%else%}
+				<div class="card post">
+		  				
+						  <div class="card-body">
+						    <h5 class="card-title"><a href="#">No posts in this sub</a></h5>
+						    <p class="card-text">be the first one to post</p>
+						    
+						  </div>
+					
+					</div> 
+				{%endif%}
+				</div>
+				<div class="col-sm-4">
+					<div class="card" style="width: 18rem;">
+  				<div class="card-body">
+					    <h5 class="card-title">r/{{subreddit.title}}</h5>
+					    <p>by-{{subreddit.author}}</p>
+					    <p><a href="{%url 'subreddit_post' subreddit.title %}" class="btn btn-primary">Post</a></p>
+					   
+					    
+				  </div>
+				</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{%endblock%}

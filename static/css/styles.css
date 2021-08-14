@@ -1,0 +1,39 @@
+body{
+		background:#dae0e6;
+		margin: 0;
+		padding: 0;
+	}
+	.navbar{
+		background: #fff !important;
+	}
+a{
+	text-decoration: none;
+	color: black;
+}
+.post{
+	margin-bottom: 1em;
+}
+.form-signin-container{
+	width: 30em;
+
+}
+.form-signin{
+	background: #fff;
+	padding: 1em;
+	width: 90%;
+}
+.form-signin input{
+	margin-bottom: 1em;
+}
+.avatar {
+	padding-right: 1.5em;
+}
+.avatar .dropdown-menu{
+	left: -2em;
+}
+@media(max-width: 990px){
+	.searchbar{
+		margin-top: -2em;
+	}
+
+}
