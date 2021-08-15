@@ -7,5 +7,8 @@ urlpatterns = [
     path('logout/',views.logout,name='logout_page'),
     path('subreddit/new',views.subreddit_create,name='subreddit_create_page'),
     path('r/<str:pk>',views.subreddit,name='subreddit'),
-    path('r/<str:pk>/submit',views.post,name='subreddit_post')
+    path('r/<str:pk>/submit',views.post,name='subreddit_post'),
+    path('ups/<int:pk>',views.up,name='post_ups'),
+    path('downs/<int:pk>',views.down,name='post_downs'),
+    path('post/<int:pk>',views.post_content,name='post_page')
 ]

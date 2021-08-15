@@ -1,0 +1,92 @@
+{%extends 'subreddit/base.html'%}
+{%load static%}
+{%block content%}
+<section class="post-content">
+	<div class="contianer">
+		<div class="row">
+			<div class="col-lg-7 m-auto">
+				<div class="card w-100 ">
+		  				<div class="card-header">
+		   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"><i class="fas fa-arrow-up"></i></button>
+		   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+		   				  <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
+		  				</div>
+						  <div class="card-body">
+						    <h5 class="card-title"><a href="#">{{post.title}}</a></h5>
+						    <p class="card-text">{{post.body}}</p>
+						    <a href="" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"> comment</a>
+						    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   								<div class="modal-dialog">
+								     <div class="modal-content">
+								      <div class="modal-header">
+								        <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+								        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								      </div>
+								      <div class="modal-body">
+								      	{%if request.user.is_authenticated%}
+								        <form method="post" >
+								        	{%csrf_token%}
+								        	{{form.as_p}}
+								        	<button type="submit" class="btn btn-success">Post a comment</button>
+								        </form>
+								        {%else%}
+								        	<p>Plese Login to post</p>
+								        {%endif%}
+									</div>
+								      
+								    </div>
+								  </div>
+								 </div>
+								        
+						  </div>
+					
+					</div> 
+					<div class="card ">
+						<div class="card-body">
+							{%for comment in comments%}
+							<div class="card mt-2">
+		  						<div class="card-body">
+						    
+						    <p class="card-text">{{comment.author}}:{{comment.content}}</p>
+						    
+						  		</div>
+		  					</div>
+		  					{%endfor%}
+		  				
+						</div>
+		  				
+						  
+					
+					</div> 
+			</div>
+		</div>
+	</div>
+</section>
+<script>
+	
+	function voteUp(id){
+		
+		const totalVoteEle=document.getElementById(`id${id}`)
+		let data = new FormData(); // 2
+		data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+		axios.post(`/ups/${id}`, data) // 4
+     		.then(res => {
+     		totalVoteEle.innerHTML=res.data.total_vote}) // 5
+     		.catch(errors => console.log(errors)) // 6
+
+	}
+	function voteDown(id){
+		
+		const totalVoteEle=document.getElementById(`id${id}`)
+		let data = new FormData(); // 2
+		data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+		axios.post(`/downs/${id}`, data) // 4
+     		.then(res => {
+     			totalVoteEle.innerHTML=res.data.total_vote
+
+     		}) // 5
+     		.catch(errors => console.log(errors)) // 6
+
+	}
+</script>
+{%endblock%}

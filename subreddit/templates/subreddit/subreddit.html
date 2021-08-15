@@ -9,12 +9,12 @@
 					{%for post in posts%}
 					<div class="card post">
 		  				<div class="card-header">
-		   				 <i class="fas fa-arrow-up"></i>
-		   				 {{post.total_vote}}
-		   				 <i class="fas fa-arrow-down"></i>
+		   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"><i class="fas fa-arrow-up"></i></button>
+		   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+		   				  <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
 		  				</div>
 						  <div class="card-body">
-						    <h5 class="card-title"><a href="#">{{post.title}}</a></h5>
+						    <h5 class="card-title"><a href="{%url 'post_page' post.id%}">{{post.title}}</a></h5>
 						    <p class="card-text">{{post.body|truncatewords:100}}</p>
 						    
 						  </div>
@@ -47,4 +47,32 @@
 			</div>
 		</div>
 	</section>
+	<script>
+	
+	function voteUp(id){
+		
+		const totalVoteEle=document.getElementById(`id${id}`)
+		let data = new FormData(); // 2
+		data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+		axios.post(`/ups/${id}`, data) // 4
+     		.then(res => {
+     		totalVoteEle.innerHTML=res.data.total_vote}) // 5
+     		.catch(errors => console.log(errors)) // 6
+
+	}
+	function voteDown(id){
+		
+		const totalVoteEle=document.getElementById(`id${id}`)
+		let data = new FormData(); // 2
+		data.append("csrfmiddlewaretoken", '{{csrf_token}}')
+		axios.post(`/downs/${id}`, data) // 4
+     		.then(res => {
+     			totalVoteEle.innerHTML=res.data.total_vote
+
+     		}) // 5
+     		.catch(errors => console.log(errors)) // 6
+
+	}
+
+	</script>
 {%endblock%}

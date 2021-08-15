@@ -1,9 +1,13 @@
 from django.shortcuts import render,redirect
-from .models import Subreddit,Post
-from .forms import CreateUserForm,CreatePostForm
+from .models import Subreddit,Post,Comment
+from .forms import CreateUserForm,CreatePostForm,CommentForm
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.http import JsonResponse
 # Create your views here.
 def index(request):
 	subreddits=Subreddit.objects.all()[:5]
@@ -66,7 +70,7 @@ def subreddit_create(request):
 
 def subreddit(request,pk):
 	subreddit=Subreddit.objects.get(title=pk)
-	posts=Post.objects.filter(subreddit__title=pk)
+	posts=Post.objects.filter(subreddit__title=pk).order_by('-total_vote')
 	context={
 	'subreddit':subreddit,
 	'posts':posts
@@ -91,3 +95,86 @@ def post(request,pk):
 	'form':form
 	}
 	return render(request,'subreddit/post.html',context)
+
+def post_content(request,pk):
+	post=Post.objects.get(pk=pk)
+	form=CommentForm()
+	comments=Comment.objects.filter(post=post)
+	if request.method=='POST':
+		form=CommentForm(request.POST)
+		if form.is_valid():
+			commentform=form.save(commit=False)
+			commentform.post=post 
+			commentform.author=request.user
+			commentform.save()
+	context={
+	'post':post,
+	'form':form,
+	'comments':comments
+	}
+	return render(request,'subreddit/post_content.html',context)
+
+	
+@login_required(login_url='login_page')
+def up(request,pk):
+	post = get_object_or_404(Post, id=pk)
+
+	if request.method=='POST':
+		print(post)
+		if post.ups.filter(id=request.user.id).exists():
+			data={
+				'total_vote':post.total_vote
+				
+				}
+			return JsonResponse(data) 
+		else:
+			if post.downs.filter(id=request.user.id).exists():
+				post.downs.remove(request.user)
+				post.ups.add(request.user)
+
+				post.total_vote+=2
+
+				post.save()
+				data={
+				'total_vote':post.total_vote
+
+				}
+				return JsonResponse(data)
+			else:
+				post.ups.add(request.user)
+				post.total_vote+=1
+				post.save()
+				data={
+				'total_vote':post.total_vote
+				}
+				return JsonResponse(data)
+				
+	return HttpResponseRedirect(reverse('index_page'))
+@login_required(login_url='login_page')
+def down(request,pk):
+	post = get_object_or_404(Post, id=pk)
+	if request.method=='POST':
+		if post.downs.filter(id=request.user.id).exists():
+			data={
+				'total_vote':post.total_vote
+				}
+			return JsonResponse(data) 
+		else:
+			if post.ups.filter(id=request.user.id).exists():
+				post.ups.remove(request.user)
+				post.downs.add(request.user)
+				post.total_vote-=2
+				post.save()
+				data={
+				'total_vote':post.total_vote
+				}
+				return JsonResponse(data)
+			else:
+				post.downs.add(request.user)
+				post.total_vote-=1
+				post.save()
+				data={
+				'total_vote':post.total_vote
+				}
+				return JsonResponse(data)
+	return HttpResponseRedirect(reverse('index_page'))
