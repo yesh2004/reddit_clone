@@ -11,5 +11,6 @@ urlpatterns = [
     path('ups/<int:pk>',views.up,name='post_ups'),
     path('downs/<int:pk>',views.down,name='post_downs'),
     path('post/<int:pk>',views.post_content,name='post_page'),
-    path('subreddit_follow/<int:pk>',views.subreddit_follow,name='subreddit_follow')
+    path('subreddit_follow/<int:pk>',views.subreddit_follow,name='subreddit_follow'),
+    path('search/',views.search,name='search_page')
 ]

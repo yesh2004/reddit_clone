@@ -20,6 +20,18 @@ def index(request):
 	}
 	return render(request,'subreddit/homepage.html',context)
 
+def search(request):
+	if request.method=='POST':
+		searched=request.POST['searched']
+		subreddits=Subreddit.objects.filter(title__contains=searched)
+		context={
+		'searched':searched,
+		'subreddits':subreddits
+		}
+		return render(request,'subreddit/searched.html',context)
+	else:
+		context={}
+		return render(request,'subreddit/searched.html',context)
 def signup(request):
 	if request.user.is_authenticated:
 		return redirect('index_page')

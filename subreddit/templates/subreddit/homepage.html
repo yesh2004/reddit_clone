@@ -41,6 +41,7 @@
 					    
 				  </div>
 				</div>
+				{%if user.is_authenticated%}
 				<div class="card" style="width: 18rem;">
   				<div class="card-body">
 					    <h5 class="card-title">Followed subreddits</h5>
@@ -51,6 +52,7 @@
 					    
 				  </div>
 				</div>
+				{%endif%}
 				</div>
 			</div>
 		</div>
