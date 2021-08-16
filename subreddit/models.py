@@ -6,6 +6,7 @@ class Subreddit(models.Model):
 	author=models.ForeignKey(User,on_delete=models.CASCADE)
 	date_created=models.DateTimeField(default=timezone.now)
 	title=models.CharField(max_length=500)
+	followers=models.ManyToManyField(User, related_name='followers',blank=True)
 	class Meta:
 		ordering=['-date_created']
 	def __str__(self):

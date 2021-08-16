@@ -5,43 +5,29 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-8">
+                        {%for post in posts%}
+
 					<div class="card post">
+					
   				<div class="card-header">
-   				 <i class="fas fa-arrow-up"></i>
-   				 45
-   				 <i class="fas fa-arrow-down"></i>
+  				{%if request.user.is_authenticated%}
+   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"> <i class="fas fa-arrow-up"></i></button>
+   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+   				   <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
+   				   {%else%}
+		   				   <a class="btn " href="{%url 'login_page'%}"> <i class="fas fa-arrow-up"></i></a>
+		   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+		   				   <a  class="btn " href="{%url 'login_page'%}"><i class="fas fa-arrow-down"></i></a>
+   				   {%endif%}
   				</div>
 				  <div class="card-body">
-				    <h5 class="card-title"><a href="#">Special title treatment</a></h5>
-				    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+				    <h5 class="card-title"><a href="#"> {{post.title}} </a></h5>
+				    <p class="card-text"> {{post.body}} </p>
 				    
 				  </div>
 				</div> 
-				<div class="card post">
-  				<div class="card-header">
-   				 <i class="fas fa-arrow-up"></i>
-   				 45
-   				 <i class="fas fa-arrow-down"></i>
-  				</div>
-				  <div class="card-body">
-				    <h5 class="card-title"><a href="#">Special title treatment</a></h5>
-				    <p class="card-text">With supporting text below as a natural lead-in to additional content.
-				    With supporting text below as a natural lead-in to additional content.With supporting text below as a natural lead-in to additional content.</p>
-				    
-				  </div>
-				</div>
-				<div class="card post">
-  				<div class="card-header">
-   				 <i class="fas fa-arrow-up"></i>
-   				 45
-   				 <i class="fas fa-arrow-down"></i>
-  				</div>
-				  <div class="card-body">
-				    <h5 class="card-title"><a href="#">Special title treatment</a></h5>
-				    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-				    
-				  </div>
-				</div>
+				{%endfor%}
+				
 				</div>
 				<div class="col-sm-4">
 					<div class="card" style="width: 18rem;">
@@ -51,6 +37,16 @@
 					    {%for subreddit in subreddits%}
 					    <p><a href="{%url 'subreddit' subreddit.title %}" class="card-link">r/{{subreddit.title}}</a></p>
 					    
+					    {%endfor%}
+					    
+				  </div>
+				</div>
+				<div class="card" style="width: 18rem;">
+  				<div class="card-body">
+					    <h5 class="card-title">Followed subreddits</h5>
+					    
+					    {%for subreddit in followed_subreddits%}
+					    <p><a href="{%url 'subreddit' subreddit.title %}" class="card-link">r/{{subreddit.title}}</a></p>
 					    {%endfor%}
 					    
 				  </div>

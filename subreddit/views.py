@@ -11,8 +11,12 @@ from django.http import JsonResponse
 # Create your views here.
 def index(request):
 	subreddits=Subreddit.objects.all()[:5]
+	posts=Post.objects.all().order_by('-total_vote')[:5]
+	followed_subreddits=Subreddit.objects.filter(followers__id=request.user.id)
 	context={
-	'subreddits':subreddits
+	'subreddits':subreddits,
+	'posts':posts,
+	'followed_subreddits':followed_subreddits
 	}
 	return render(request,'subreddit/homepage.html',context)
 
@@ -71,11 +75,25 @@ def subreddit_create(request):
 def subreddit(request,pk):
 	subreddit=Subreddit.objects.get(title=pk)
 	posts=Post.objects.filter(subreddit__title=pk).order_by('-total_vote')
+	isfollowed=False
+	if subreddit.followers.filter(id=request.user.id).exists():
+		isfollowed=True
 	context={
 	'subreddit':subreddit,
-	'posts':posts
+	'posts':posts,
+	'isfollowed':isfollowed
 	}
 	return render(request,'subreddit/subreddit.html',context)
+@login_required(login_url='login_page')
+def subreddit_follow(request,pk):
+	subreddit=Subreddit.objects.get(pk=pk)
+
+	if request.method=='POST':
+		if subreddit.followers.filter(id=request.user.id).exists():
+			subreddit.followers.remove(request.user)
+		else:
+			subreddit.followers.add(request.user)
+	return HttpResponseRedirect(reverse('subreddit',args=(subreddit.title,)))
 
 @login_required(login_url='login_page')
 def post(request,pk):
@@ -120,15 +138,16 @@ def up(request,pk):
 	post = get_object_or_404(Post, id=pk)
 
 	if request.method=='POST':
-		print(post)
+		
 		if post.ups.filter(id=request.user.id).exists():
 			data={
-				'total_vote':post.total_vote
-				
-				}
+					'total_vote':post.total_vote
+					
+					}
 			return JsonResponse(data) 
 		else:
 			if post.downs.filter(id=request.user.id).exists():
+
 				post.downs.remove(request.user)
 				post.ups.add(request.user)
 
@@ -136,18 +155,20 @@ def up(request,pk):
 
 				post.save()
 				data={
-				'total_vote':post.total_vote
+					'total_vote':post.total_vote
 
-				}
+					}
 				return JsonResponse(data)
 			else:
 				post.ups.add(request.user)
 				post.total_vote+=1
 				post.save()
 				data={
-				'total_vote':post.total_vote
-				}
+					'total_vote':post.total_vote
+					}
 				return JsonResponse(data)
+		
+			
 				
 	return HttpResponseRedirect(reverse('index_page'))
 @login_required(login_url='login_page')

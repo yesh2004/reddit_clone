@@ -9,10 +9,16 @@
 					{%for post in posts%}
 					<div class="card post">
 		  				<div class="card-header">
-		   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"><i class="fas fa-arrow-up"></i></button>
-		   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
-		   				  <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
-		  				</div>
+			  				{%if request.user.is_authenticated%}
+			   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"> <i class="fas fa-arrow-up"></i></button>
+			   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+			   				   <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
+			   				   {%else%}
+					   				   <a class="btn " href="{%url 'login_page'%}"> <i class="fas fa-arrow-up"></i></a>
+					   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+					   				   <a  class="btn " href="{%url 'login_page'%}"><i class="fas fa-arrow-down"></i></a>
+			   				   {%endif%}
+  						</div>
 						  <div class="card-body">
 						    <h5 class="card-title"><a href="{%url 'post_page' post.id%}">{{post.title}}</a></h5>
 						    <p class="card-text">{{post.body|truncatewords:100}}</p>
@@ -39,6 +45,17 @@
 					    <h5 class="card-title">r/{{subreddit.title}}</h5>
 					    <p>by-{{subreddit.author}}</p>
 					    <p><a href="{%url 'subreddit_post' subreddit.title %}" class="btn btn-primary">Post</a></p>
+					    <p>
+					    	<form action="{%url 'subreddit_follow' subreddit.id %}" method="post">
+					    		{%csrf_token%}
+					    		{%if isfollowed%}
+					    		<button type="submit" class="btn btn-danger ">UnFollow</button>
+					    		{%else%}
+					    		<button type="submit" class="btn ">Follow</button>
+					    		{%endif%}
+
+					    	</form>
+					    </p>
 					   
 					    
 				  </div>

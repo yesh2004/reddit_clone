@@ -7,10 +7,16 @@
 			<div class="col-lg-7 m-auto">
 				<div class="card w-100 ">
 		  				<div class="card-header">
-		   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"><i class="fas fa-arrow-up"></i></button>
-		   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
-		   				  <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
-		  				</div>
+			  				{%if request.user.is_authenticated%}
+			   				 <button class="btn vote_up" value='{{post.id}}' onclick="voteUp({{post.id}})"> <i class="fas fa-arrow-up"></i></button>
+			   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+			   				   <button  class="btn vote_down" value='{{post.id}}' onclick="voteDown({{post.id}})"><i class="fas fa-arrow-down"></i></button>
+			   				   {%else%}
+					   				   <a class="btn " href="{%url 'login_page'%}"> <i class="fas fa-arrow-up"></i></a>
+					   				 <span id='id{{post.id}}'>{{post.total_vote}}</span>
+					   				   <a  class="btn " href="{%url 'login_page'%}"><i class="fas fa-arrow-down"></i></a>
+			   				   {%endif%}
+  						</div>
 						  <div class="card-body">
 						    <h5 class="card-title"><a href="#">{{post.title}}</a></h5>
 						    <p class="card-text">{{post.body}}</p>
